@@ -16,9 +16,9 @@ from config import load_config, save_config
 
 class MainWindow(ttk.Window):
     def __init__(self):
-        super().__init__(themename="flatly")
+        super().__init__(themename="cosmo")
 
-        self.title("Gestor de facturas y trabajos (BDTalleres)")
+        self.title("Aplicacion para consulta de facturas -  Electromecanica Luis)")
         self.geometry("1100x650")
 
         self.conn = None
@@ -45,6 +45,7 @@ class MainWindow(ttk.Window):
     def _build_notebook(self):
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+        self.notebook.configure(bootstyle="info")
 
         # Creamos las pestañas pero les pasamos self para que puedan llamar a métodos de la ventana
         self.clientes_tab = ClientesTab(self.notebook, self)
