@@ -16,7 +16,6 @@ def resource_path(relative_path: str) -> str:
         base_path = os.path.dirname(__file__)
     return os.path.join(base_path, relative_path)
 
-
 def generar_pdf_factura(conn, numero_factura: str | int, ruta_salida: str):
     """
     Genera un PDF de la factura indicada en ruta_salida.
@@ -94,11 +93,13 @@ def generar_pdf_factura(conn, numero_factura: str | int, ruta_salida: str):
     else:
         fecha_str = ""
 
+    matricula = getattr(cab, "MATRICULA", "") or ""
+
     c.drawString(margen_izq, y, f"Nº: {cab.NUMERO}")
     c.drawString(margen_izq + 60 * mm, y, f"Fecha: {fecha_str}")
     y -= 8 * mm
 
-    # Datos del cliente
+    # Datos del cliente / vehiculo
     c.setFont("Helvetica-Bold", 10)
     c.drawString(margen_izq, y, "Cliente:")
     y -= 5 * mm
@@ -108,7 +109,11 @@ def generar_pdf_factura(conn, numero_factura: str | int, ruta_salida: str):
     if getattr(cab, "CIF", None):
         c.drawString(margen_izq, y, f"CIF/NIF: {cab.CIF}")
         y -= 5 * mm
-
+    
+    if matricula:
+        c.drawString(margen_izq, y, f"Matrícula: {matricula}")
+        y -= 5 * mm
+    
     y -= 5 * mm
 
     # Cabecera de la tabla de líneas

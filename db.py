@@ -30,7 +30,7 @@ def get_facturas(conn, cliente=None, numero=None):
         where_clause = "WHERE " + " AND ".join(where)
 
     query = f"""
-        SELECT NUMERO, FECHA, CLIENTE, CIF, TOTAL, BASE1, IVA1
+        SELECT NUMERO, FECHA, CLIENTE, CIF, TOTAL, BASE1, IVA1, MATRICULA
         FROM Facting
         {where_clause}
         ORDER BY FECHA DESC;
@@ -73,7 +73,7 @@ def get_trabajos(conn, cliente=None, texto=None):
         where_clause = "WHERE " + " AND ".join(where)
 
     query = f"""
-        SELECT f.FECHA, c.REFERENCIA, f.CLIENTE, c.Datos,
+        SELECT f.FECHA, c.REFERENCIA, f.CLIENTE, f.MATRICULA, c.Datos,
                c.CANTIDAD, c.PRECIO,
                (c.CANTIDAD * c.PRECIO) AS Importe
         FROM Contenid AS c

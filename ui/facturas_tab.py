@@ -70,7 +70,7 @@ class FacturasTab(ttk.Frame):
         frame_lista = ttk.Frame(split)
         split.add(frame_lista, weight=3)
 
-        columnas = ("numero", "fecha", "cliente", "cif", "total")
+        columnas = ("numero", "fecha", "cliente", "cif", "matricula", "total")
         self.tree_facturas = ttk.Treeview(
             frame_lista,
             columns=columnas,
@@ -81,12 +81,14 @@ class FacturasTab(ttk.Frame):
         self.tree_facturas.heading("fecha", text="Fecha")
         self.tree_facturas.heading("cliente", text="Cliente")
         self.tree_facturas.heading("cif", text="CIF")
+        self.tree_facturas.heading("matricula", text="Matrícula")
         self.tree_facturas.heading("total", text="Total")
 
         self.tree_facturas.column("numero", width=100, anchor="center")
         self.tree_facturas.column("fecha", width=90, anchor="center")
         self.tree_facturas.column("cliente", width=350, anchor="w")
         self.tree_facturas.column("cif", width=120, anchor="center")
+        self.tree_facturas.column("matricula", width=120, anchor="center")
         self.tree_facturas.column("total", width=100, anchor="e")
 
         self.tree_facturas.pack(side="left", fill="both", expand=True)
@@ -218,12 +220,12 @@ class FacturasTab(ttk.Frame):
                     fecha_str = fecha.strftime("%d/%m/%Y")
                 except Exception:
                     fecha_str = str(fecha)
-                    
+            mat = getattr(r, "MATRICULA", "") or ""       
             total = round(float(r.TOTAL or 0), 2),
             self.tree_facturas.insert(
                 "",
                 "end",
-                values=(r.NUMERO, fecha_str, r.CLIENTE, r.CIF, total),
+                values=(r.NUMERO, fecha_str, r.CLIENTE, r.CIF, mat, total),
             )
 
         if not rows:
@@ -281,11 +283,13 @@ class FacturasTab(ttk.Frame):
                 fecha_str = fecha.strftime("%d/%m/%Y")
             except Exception:
                 fecha_str = str(fecha)
-
+        
+        mat = getattr(cabecera, "MATRICULA", "") or ""
         txt = (
             f"Nº factura: {cabecera.NUMERO}    Fecha: {fecha_str}\n"
             f"Cliente: {cabecera.CLIENTE}\n"
             f"CIF: {cabecera.CIF}\n"
+            f"Matrícula: {mat}\n"
             f"Base: {cabecera.BASE1}   IVA: {cabecera.IVA1}   Total: {cabecera.TOTAL}"
         )
         self.lbl_factura_info.config(text=txt)

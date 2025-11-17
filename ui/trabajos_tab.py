@@ -62,7 +62,7 @@ class TrabajosTab(ttk.Frame):
         frame_lista = ttk.Frame(self)
         frame_lista.pack(fill="both", expand=True, padx=5, pady=5)
 
-        cols = ("fecha", "numero", "cliente", "descripcion", "cantidad", "precio", "importe")
+        cols = ("fecha", "numero", "cliente", "matricula", "descripcion", "cantidad", "precio", "importe")
         self.tree_trabajos = ttk.Treeview(
             frame_lista, columns=cols, show="headings", selectmode="browse"
         )
@@ -70,6 +70,7 @@ class TrabajosTab(ttk.Frame):
         self.tree_trabajos.heading("fecha", text="Fecha")
         self.tree_trabajos.heading("numero", text="Nº factura")
         self.tree_trabajos.heading("cliente", text="Cliente")
+        self.tree_trabajos.heading("matricula", text="Matrícula")
         self.tree_trabajos.heading("descripcion", text="Descripción")
         self.tree_trabajos.heading("cantidad", text="Cant.")
         self.tree_trabajos.heading("precio", text="Precio")
@@ -78,6 +79,7 @@ class TrabajosTab(ttk.Frame):
         self.tree_trabajos.column("fecha", width=90, anchor="center")
         self.tree_trabajos.column("numero", width=100, anchor="center")
         self.tree_trabajos.column("cliente", width=230, anchor="w")
+        self.tree_trabajos.column("matricula", width=230, anchor="w")
         self.tree_trabajos.column("descripcion", width=320, anchor="w")
         self.tree_trabajos.column("cantidad", width=60, anchor="e")
         self.tree_trabajos.column("precio", width=80, anchor="e")
@@ -156,7 +158,8 @@ class TrabajosTab(ttk.Frame):
                     importe = round(cantidad * precio, 2)
                 except Exception:
                     importe = 0.00
-
+            
+            mat = getattr(r, "MATRICULA", "") or ""
             self.tree_trabajos.insert(
                 "",
                 "end",
@@ -164,6 +167,7 @@ class TrabajosTab(ttk.Frame):
                     fecha_str,
                     r.REFERENCIA,
                     r.CLIENTE,
+                    mat,
                     r.Datos,
                     cantidad,
                     precio,

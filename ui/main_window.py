@@ -1,11 +1,12 @@
 # ui/main_window.py
+import os
+import sys
+
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import filedialog
+from tkinter import messagebox, filedialog
 
-import os
 
 from db import connect
 from ui.clientes_tab import ClientesTab
@@ -13,6 +14,16 @@ from ui.facturas_tab import FacturasTab
 from ui.trabajos_tab import TrabajosTab
 from config import load_config, save_config
 
+def resource_path(relative_path: str) -> str:
+    """
+    Devuelve la ruta correcta tanto en modo script como empaquetado con PyInstaller.
+    """
+    if hasattr(sys, "_MEIPASS"):  # ejecutando dentro del .exe
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(__file__)  # carpeta ui
+        base_path = os.path.dirname(base_path)  # subir a raíz del proyecto
+    return os.path.join(base_path, relative_path)
 
 class MainWindow(ttk.Window):
     def __init__(self):
@@ -24,12 +35,41 @@ class MainWindow(ttk.Window):
         self.conn = None
         self.db_path = None
 
+        # 1) Header con logo
+        self._build_header()
+
+        # 2) Barra superior (ruta BBDD)
         self._build_top_bar()
+
+        # 3) Notebook con pestañas
         self._build_notebook()
 
         self.config_data = load_config()
         self.db_path_var.set(self.config_data.get("db_path", ""))
 
+    def _build_header(self):
+        header = ttk.Frame(self, padding=20)
+        header.pack(fill="x")
+        # Cargamos el logo (y guardamos la referencia en self para que no se lo lleve el GC)
+        try:
+            self.logo_image = tk.PhotoImage(file=resource_path("Logo.jpg"))
+        except Exception:
+            self.logo_image = None
+        if self.logo_image:
+            logo_label = ttk.Label(header, image=self.logo_image)
+            logo_label.pack(side="left", padx=(0, 15))
+        title_frame = ttk.Frame(header)
+        title_frame.pack(side="left", fill="x", expand=True)
+        ttk.Label(
+            title_frame,
+            text="Electromecánica Luis",
+            font=("Segoe UI", 18, "bold")
+        ).pack(anchor="w")
+        ttk.Label(
+            title_frame,
+            text="Gestor de clientes, facturas y trabajos",
+            font=("Segoe UI", 10)
+        ).pack(anchor="w")
 
     def _build_top_bar(self):
         top = ttk.Frame(self, padding=10)
