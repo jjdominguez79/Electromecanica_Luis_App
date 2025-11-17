@@ -6,13 +6,16 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import tkinter as tk
 from tkinter import messagebox, filedialog
-
+from update_checker import is_update_available
+from version import APP_VERSION, APP_NAME
+import webbrowser
 
 from db import connect
 from ui.clientes_tab import ClientesTab
 from ui.facturas_tab import FacturasTab
 from ui.trabajos_tab import TrabajosTab
 from config import load_config, save_config
+from version import APP_NAME, APP_VERSION
 
 def resource_path(relative_path: str) -> str:
     """
@@ -28,8 +31,9 @@ def resource_path(relative_path: str) -> str:
 class MainWindow(ttk.Window):
     def __init__(self):
         super().__init__(themename="cosmo")
-
+        
         self.title("Aplicacion para consulta de facturas -  Electromecanica Luis)")
+        self.title(f"{APP_NAME} - v{APP_VERSION}")
         self.geometry("1100x650")
 
         self.conn = None
@@ -72,16 +76,46 @@ class MainWindow(ttk.Window):
         ).pack(anchor="w")
 
     def _build_top_bar(self):
+        # Frame superior
         top = ttk.Frame(self, padding=10)
         top.pack(fill="x")
-
-        ttk.Label(top, text="Base de datos Access (.mdb):").pack(side="left")
+    
+        # Etiqueta ruta
+        ttk.Label(top, text="Base de datos:", font=("Segoe UI", 10, "bold")).pack(side="left")
+    
+        # Variable ruta
         self.db_path_var = tk.StringVar()
-        ttk.Entry(top, textvariable=self.db_path_var, width=60).pack(side="left", padx=5)
-
-        ttk.Button(top, text="Examinar...", command=self.browse_db).pack(side="left", padx=5)
-        ttk.Button(top, text="Conectar", command=self.connect_db).pack(side="left", padx=5)
-
+    
+        # Entrada de texto
+        entry = ttk.Entry(top, textvariable=self.db_path_var, width=60)
+        entry.pack(side="left", padx=10)
+    
+        # Botón examinar
+        ttk.Button(
+            top,
+            text="Examinar",
+            bootstyle="secondary",
+            command=self.browse_db
+        ).pack(side="left", padx=5)
+    
+        # Botón conectar
+        ttk.Button(
+            top,
+            text="Conectar",
+            bootstyle="success",
+            command=self.connect_db
+        ).pack(side="left", padx=5)
+    
+        # Botón buscar actualizaciones (si existe check_updates)
+        if hasattr(self, "check_updates"):
+            ttk.Button(
+                top,
+                text="Buscar actualizaciones",
+                bootstyle="info",
+                command=self.check_updates
+            ).pack(side="right", padx=5)
+    
+    
     def _build_notebook(self):
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(fill="both", expand=True, padx=10, pady=(0, 10))
@@ -132,3 +166,30 @@ class MainWindow(ttk.Window):
             messagebox.showwarning("Sin conexión", "Conéctate primero a la base de datos.")
             return None
         return self.conn
+    
+    def check_updates(self):
+        ok, remote_str = is_update_available()
+        if remote_str is None:
+            messagebox.showwarning(
+                "Actualización",
+                "No se ha podido comprobar si hay una versión nueva.\n"
+                "Comprueba tu conexión a Internet o inténtalo más tarde.",
+            )
+            return
+
+        if ok:
+            # Hay una versión nueva
+            resp = messagebox.askyesno(
+                "Nueva versión disponible",
+                f"Estás usando la versión {APP_VERSION}.\n"
+                f"La versión más reciente es {remote_str}.\n\n"
+                "¿Quieres abrir la página de descargas?",
+            )
+            if resp:
+                # Abre tu página de releases o de descarga
+                webbrowser.open("https://github.com/TU_USUARIO/TU_REPO/releases")
+        else:
+            messagebox.showinfo(
+                "Actualización",
+                f"Estás usando la última versión ({APP_VERSION}).",
+            )
