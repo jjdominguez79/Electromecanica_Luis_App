@@ -9,6 +9,7 @@ from tkinter import messagebox, filedialog
 from update_checker import is_update_available
 from version import APP_VERSION, APP_NAME
 import webbrowser
+from PIL import Image, ImageTk
 
 from db import connect
 from ui.clientes_tab import ClientesTab
@@ -29,6 +30,7 @@ def resource_path(relative_path: str) -> str:
     return os.path.join(base_path, relative_path)
 
 class MainWindow(ttk.Window):
+    
     def __init__(self):
         super().__init__(themename="cosmo")
         
@@ -52,23 +54,37 @@ class MainWindow(ttk.Window):
         self.db_path_var.set(self.config_data.get("db_path", ""))
 
     def _build_header(self):
+        
         header = ttk.Frame(self, padding=20)
         header.pack(fill="x")
-        # Cargamos el logo (y guardamos la referencia en self para que no se lo lleve el GC)
-        try:
-            self.logo_image = tk.PhotoImage(file=resource_path("Logo.jpg"))
-        except Exception:
-            self.logo_image = None
+
+        # Cargamos el logo redimensionado con Pillow
+        logo_path = resource_path("logo.png")
+        self.logo_image = None
+
+        if os.path.exists(logo_path):
+            try:
+                img = Image.open(logo_path)
+                # Ajusta aquí el tamaño deseado (ancho, alto) en píxeles
+                img = img.resize((150, 80), Image.LANCZOS)
+                self.logo_image = ImageTk.PhotoImage(img)
+            except Exception as e:
+                print("Error cargando el logo:", e)
+                self.logo_image = None
+
         if self.logo_image:
             logo_label = ttk.Label(header, image=self.logo_image)
             logo_label.pack(side="left", padx=(0, 15))
+
         title_frame = ttk.Frame(header)
         title_frame.pack(side="left", fill="x", expand=True)
+
         ttk.Label(
             title_frame,
             text="Electromecánica Luis",
             font=("Segoe UI", 18, "bold")
         ).pack(anchor="w")
+
         ttk.Label(
             title_frame,
             text="Gestor de clientes, facturas y trabajos",
@@ -114,7 +130,6 @@ class MainWindow(ttk.Window):
                 bootstyle="info",
                 command=self.check_updates
             ).pack(side="right", padx=5)
-    
     
     def _build_notebook(self):
         self.notebook = ttk.Notebook(self)

@@ -1,2 +1,0 @@
-ttkbootstrap==1.6.1
-pyodbc==5.0.1

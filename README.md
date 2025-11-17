@@ -75,7 +75,7 @@ source venv/bin/activate
 ### 3. Instalar dependencias necesarias
 
 ````
-pip install pyodbc reportlab ttkbootstrap pyinstaller
+pip install pyodbc reportlab ttkbootstrap pyinstaller pillow
 ````
 
 ### 4. Conexión con la base de datos Access
