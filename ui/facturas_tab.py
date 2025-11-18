@@ -25,6 +25,7 @@ class FacturasTab(ttk.Frame):
         # Variables de filtros
         self.fact_cliente_var = tk.StringVar()
         self.fact_numero_var = tk.StringVar()
+        self.fact_matricula_var = tk.StringVar()
 
         # Estructuras de datos en memoria
         self.lista_facturas = []  # para guardar el resultado de la última búsqueda
@@ -37,6 +38,7 @@ class FacturasTab(ttk.Frame):
     # Construcción de la interfaz
     # ---------------------------------------------------------
     def _build_ui(self):
+
         # ----- Filtros -----
         filtros = ttk.LabelFrame(self, text="Filtros de búsqueda", padding=10)
         filtros.pack(fill="x", pady=5, padx=5)
@@ -46,9 +48,14 @@ class FacturasTab(ttk.Frame):
             row=0, column=1, padx=5
         )
 
-        ttk.Label(filtros, text="Nº factura:").grid(row=0, column=2, sticky="w")
-        ttk.Entry(filtros, textvariable=self.fact_numero_var, width=15).grid(
-            row=0, column=3, padx=5
+        ttk.Label(filtros, text="Matrícula contiene:").grid(row=1, column=0, sticky="w")
+        ttk.Entry(filtros, textvariable=self.fact_matricula_var, width=30).grid(
+            row=1, column=1, padx=5
+        )
+
+        ttk.Label(filtros, text="Nº factura:").grid(row=3, column=0, sticky="w")
+        ttk.Entry(filtros, textvariable=self.fact_numero_var, width=30).grid(
+            row=3, column=1, padx=5
         )
 
         ttk.Button(filtros, text="Buscar", command=self.buscar_facturas).grid(
@@ -126,13 +133,6 @@ class FacturasTab(ttk.Frame):
         )
         self.btn_pdf.pack(anchor="e", pady=(5, 0))
 
-        self.lbl_factura_info = ttk.Label(
-            self.detalle_cabecera,
-            text="Seleccione una factura...",
-            justify="left",
-        )
-        self.lbl_factura_info.pack(anchor="w")
-
         # Líneas
         self.detalle_lineas = ttk.LabelFrame(
             frame_detalle, text="Líneas / trabajos", padding=5
@@ -182,12 +182,12 @@ class FacturasTab(ttk.Frame):
         if reset_campos:
             self.fact_cliente_var.set("")
             self.fact_numero_var.set("")
+            self.fact_matricula_var.set("")
 
         # Limpiar tablas
         self.tree_facturas.delete(*self.tree_facturas.get_children())
         self.tree_lineas.delete(*self.tree_lineas.get_children())
         self.lbl_factura_info.config(text="Seleccione una factura...")
-
         self.lista_facturas = []
 
     def buscar_facturas(self):
@@ -197,9 +197,10 @@ class FacturasTab(ttk.Frame):
 
         cliente = self.fact_cliente_var.get().strip()
         numero = self.fact_numero_var.get().strip()
-
+        matricula = self.fact_matricula_var.get().strip()
+        
         try:
-            rows = get_facturas(conn, cliente=cliente or None, numero=numero or None)
+            rows = get_facturas(conn, cliente=cliente or None, numero=numero or None, matricula=matricula or None,)
         except Exception as e:
             messagebox.showerror("Error al buscar facturas", str(e))
             return

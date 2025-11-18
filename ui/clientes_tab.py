@@ -25,16 +25,16 @@ class ClientesTab(ttk.Frame):
         cont = ttk.Frame(self)
         cont.pack(fill="both", expand=True, padx=10, pady=10)
 
-        cols = ("nombre", "cif", "direccion")
+        cols = ("nombre", "cif")
         self.tree_clientes = ttk.Treeview(cont, columns=cols, show="headings")
 
         self.tree_clientes.heading("nombre", text="Nombre")
         self.tree_clientes.heading("cif", text="CIF")
-        self.tree_clientes.heading("direccion", text="Dirección")
+        #self.tree_clientes.heading("direccion", text="Dirección")
 
         self.tree_clientes.column("nombre", width=300, anchor="w")
         self.tree_clientes.column("cif", width=120, anchor="center")
-        self.tree_clientes.column("direccion", width=350, anchor="w")
+        #self.tree_clientes.column("direccion", width=350, anchor="w")
 
         self.tree_clientes.pack(side="left", fill="both", expand=True)
 

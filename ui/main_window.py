@@ -36,7 +36,7 @@ class MainWindow(ttk.Window):
         
         self.title("Aplicacion para consulta de facturas -  Electromecanica Luis)")
         self.title(f"{APP_NAME} - v{APP_VERSION}")
-        self.geometry("1100x650")
+        self.geometry("1200x900")
 
         self.conn = None
         self.db_path = None

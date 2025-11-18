@@ -46,7 +46,7 @@ def generar_pdf_factura(conn, numero_factura: str | int, ruta_salida: str):
     logo_alto = 35 * mm
 
     # Ruta del logo (ajusta el nombre de archivo)
-    logo_path = resource_path("logo.jpg")
+    logo_path = resource_path("logo.png")
 
     if os.path.exists(logo_path):
         c.drawImage(

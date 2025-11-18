@@ -21,6 +21,7 @@ class TrabajosTab(ttk.Frame):
         # Variables de filtros
         self.trab_cliente_var = tk.StringVar()
         self.trab_texto_var = tk.StringVar()
+        self.trab_matricula_var = tk.StringVar()
 
         # Últimos trabajos cargados (por si se quiere reutilizar)
         self.lista_trabajos = []
@@ -36,14 +37,19 @@ class TrabajosTab(ttk.Frame):
 
         ttk.Label(filtros, text="Cliente contiene:").grid(row=0, column=0, sticky="w")
         ttk.Entry(filtros, textvariable=self.trab_cliente_var, width=30).grid(
-            row=0, column=1, padx=5
+            row=0, column=1, padx=2
         )
 
-        ttk.Label(filtros, text="Texto en descripción:").grid(
-            row=0, column=2, sticky="w"
+        ttk.Label(filtros, text="Matrícula contiene:").grid(row=1, column=0, sticky="w")
+        ttk.Entry(filtros, textvariable=self.trab_matricula_var, width=30).grid(
+        row=1, column=1, padx=1
         )
+        
+        ttk.Label(filtros, text="Texto en descripción:").grid(
+            row=3, column=0, sticky="w"
+        )        
         ttk.Entry(filtros, textvariable=self.trab_texto_var, width=30).grid(
-            row=0, column=3, padx=5
+            row=3, column=1, padx=5
         )
 
         ttk.Button(filtros, text="Buscar", command=self.buscar_trabajos).grid(
@@ -113,6 +119,7 @@ class TrabajosTab(ttk.Frame):
         if reset_campos:
             self.trab_cliente_var.set("")
             self.trab_texto_var.set("")
+            self.trab_matricula_var.set("")
 
         self.tree_trabajos.delete(*self.tree_trabajos.get_children())
         self.lista_trabajos = []
@@ -124,12 +131,14 @@ class TrabajosTab(ttk.Frame):
 
         cliente = self.trab_cliente_var.get().strip()
         texto = self.trab_texto_var.get().strip()
+        matricula = self.trab_matricula_var.get().strip()
 
         try:
             rows = get_trabajos(
                 conn,
                 cliente=cliente or None,
                 texto=texto or None,
+                matricula=matricula or None,
             )
         except Exception as e:
             messagebox.showerror(
@@ -207,4 +216,5 @@ class TrabajosTab(ttk.Frame):
         """
         self.trab_cliente_var.set(nombre_cliente)
         self.trab_texto_var.set("")
+        self.trab_matricula_var.set("")
         self.buscar_trabajos()
