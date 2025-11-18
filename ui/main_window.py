@@ -202,7 +202,7 @@ class MainWindow(ttk.Window):
             )
             if resp:
                 # Abre tu página de releases o de descarga
-                webbrowser.open("https://github.com/TU_USUARIO/TU_REPO/releases")
+                webbrowser.open("https://github.com/jjdominguez79/Electromecanica_Luis_App/releases")
         else:
             messagebox.showinfo(
                 "Actualización",
